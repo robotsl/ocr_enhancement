@@ -3,7 +3,7 @@ import tkinter.filedialog
 import os
 from PIL import ImageGrab
 from time import sleep
-import OCR
+import OCR.OCR as OCR
 
 class MyCapture(object):
     def __init__(self,png,tk_obj):
@@ -56,13 +56,17 @@ class MyCapture(object):
             top, bottom = sorted([self.Y.get(), event.y])
             pic = ImageGrab.grab((left+1, top+1, right, bottom))
             #弹出保存截图对话框
-            fileName = "for_ocr.png"
+            fileName = "D:/ocr_enhancement/OCR/for_ocr.png"
             #关闭当前窗口
             self.top.destroy()
             pic.save(fileName)
             ocr = OCR.OCR()
-            result = ocr.pic_orc("D:/orc_enhancement/for_ocr.png",2,2.0)
-            tk_obj.set_result(result,"before_enhance")
+            result = ocr.pic_orc("D:/ocr_enhancement/OCR/for_ocr.png",2,2.0)
+            #tk_obj.set_result(result,"before_enhance")
+            tk_obj.init_data_Text.delete('1.0','end')
+            #tk_obj.init_data_Text.insert("end","test")
+            tk_obj.init_data_Text.insert("end",result)
+            tk_obj.result_data_Text.delete('1.0','end')
 
         self.canvas.bind('<ButtonRelease-1>', onLeftButtonUp)
         self.canvas.pack(fill=tkinter.BOTH, expand=tkinter.YES)
