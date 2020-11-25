@@ -3,8 +3,8 @@ import tkinter.filedialog
 import os
 from PIL import ImageGrab
 from time import sleep
-import capture
-#import OCR
+import OCR.capture as capture
+
 
 class GUI(object):
     def __init__(self):
@@ -43,8 +43,10 @@ class GUI(object):
         im = ImageGrab.grab()
         im.save(filename)
         im.close()
-        ok = capture.MyCapture(filename,self)
-        self.clear_text()
+        #self.init_data_Text.insert("end","test")
+        capture.MyCapture(filename,self)
+        #self.init_data_Text.insert("end","test")
+        #self.clear_text()
         self.init_window.state('normal')
         sleep(2)
 
@@ -64,3 +66,10 @@ class GUI(object):
     def clear_text(self):
         self.init_data_Text.delete('1.0','end')
         self.result_data_Text.delete('1.0','end')
+
+def main():
+    gui = GUI()
+    gui.gui_start()
+
+if __name__ == '__main__':
+    main()
