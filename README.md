@@ -33,7 +33,7 @@ An assignment for NLP.
 
 ##### 形似纠错
 
-- [ ] shape2vec
+- [x] shape2vec
 - [ ] 形近字字典
 - [ ] 用于训练纠错模型的语料
 - [ ] 神经网络纠错模型
