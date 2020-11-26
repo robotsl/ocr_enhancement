@@ -1,4 +1,10 @@
 __pycache__
+*.py[cod]
+*.pyc
+*.pyo
+*.pth
 *.png
 *.jpg
 *.gif
+.idea/
+CPS-OCR-Engine-master/
