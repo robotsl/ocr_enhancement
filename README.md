@@ -24,18 +24,21 @@ An assignment for NLP.
 
 - [ ] OCR 模型
 - [ ] 能与纠错模型交互（its output as input）
+- [ ] 给出候选字列表 + 对应的softmax值表
 
 ##### LM
 
 - [ ] 模型选择
 - [ ] 剪枝
 - [ ] 困惑度计算接口
+- [x] 字间转移概率
 
 ##### 形似纠错
 
 - [x] shape2vec
-- [ ] 形近字字典
-- [ ] 用于训练纠错模型的语料
+- [x] 形近字字典
+- [x] 字间相似度量函数 `charSim(c1, c2)`
+- [ ] ~~用于训练纠错模型的语料~~
 - [ ] 神经网络纠错模型
 - [ ] 动态规划纠错模型
 
@@ -52,12 +55,6 @@ OCR --> text_twisted
 text_twisted --> LM_corrector
 LM_corrector --> text_final
 ```
-
-缺点
-
-1. OCR 和使用形近字字典生成的用于纠错的语料分布不一致
-
-
 
 
 
