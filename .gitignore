@@ -6,5 +6,8 @@ __pycache__
 *.png
 *.jpg
 *.gif
+*.zip
 .idea/
 CPS-OCR-Engine-master/
+CRNN_Chinese_Characters_Rec-stable/
+mlm-pytorch-master/
