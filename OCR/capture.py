@@ -1,9 +1,12 @@
 import tkinter
 import tkinter.filedialog
 import os
-from PIL import ImageGrab
-from time import sleep
+import torch
+#from PIL import ImageGrab
+import pyscreenshot as ImageGrab
 import OCR.OCR as OCR
+from time import sleep
+
 
 class MyCapture(object):
     def __init__(self,png,tk_obj):
@@ -56,12 +59,14 @@ class MyCapture(object):
             top, bottom = sorted([self.Y.get(), event.y])
             pic = ImageGrab.grab((left+1, top+1, right, bottom))
             #弹出保存截图对话框
-            fileName = "D:/ocr_enhancement/OCR/for_ocr.png"
+            fileName = "/home/robotsl/workspace/ocr_enhancement/OCR/images/for_ocr.png"
             #关闭当前窗口
             self.top.destroy()
             pic.save(fileName)
-            ocr = OCR.OCR()
-            result = ocr.pic_orc("D:/ocr_enhancement/OCR/for_ocr.png",2,2.0)
+            tk_obj.init_window.state('normal')
+            result,log = OCR.OCR_OR_LOGMAX("log")
+            #sorted,indes = torch.sort(log,-1)
+            print(log[:,:10].shape)
             #tk_obj.set_result(result,"before_enhance")
             tk_obj.init_data_Text.delete('1.0','end')
             #tk_obj.init_data_Text.insert("end","test")
