@@ -1,9 +1,11 @@
 import tkinter as tk
 import tkinter.filedialog
 import os
-from PIL import ImageGrab
+#from PIL import ImageGrab
+import pyscreenshot as ImageGrab
 from time import sleep
 import OCR.capture as capture
+import COrrector.Corrector as CO
 
 
 class GUI(object):
@@ -32,23 +34,24 @@ class GUI(object):
     def command_for_button(self):
         str = self.init_data_Text.get('0.0','end')
         print("waiting for devolpoe",str)
+        result = CO.correctAll(str)
         self.result_data_Text.delete('1.0','end')
-        self.result_data_Text.insert("end",str)
+        self.result_data_Text.insert("end",esult)
 
     def key(self,event=None):
         print('You pressed Ctrl+Shift+t')
-        self.init_window.state('icon')
-        sleep(0.2)
-        filename = 'temp.png'  #这里一定要这样写，不然会出错
+        self.init_window.state('iconic')
+        filename = './OCR/images/temp.png'  #这里一定要这样写，不然会出错
         im = ImageGrab.grab()
         im.save(filename)
         im.close()
         #self.init_data_Text.insert("end","test")
         capture.MyCapture(filename,self)
+        self.init_window.state('withdrawn')
         #self.init_data_Text.insert("end","test")
         #self.clear_text()
-        self.init_window.state('normal')
-        sleep(2)
+
+
 
     def gui_start(self):
         self.set_init_window()
