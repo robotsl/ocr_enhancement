@@ -62,7 +62,7 @@ def recognition(config, img, model, converter, device):
     sim_pred = converter.decode(preds.data, preds_size.data, raw=False)
     log_softmax = torch.index_select(preds1.T,1,index).T
     print(log_softmax)
-    new_log,idnex = torch.sort(log_softmax,dim = )
+    #new_log,idnex = torch.sort(log_softmax,dim = )
     print('results: {0}'.format(sim_pred))
     return sim_pred,log_softmax
 

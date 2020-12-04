@@ -5,7 +5,7 @@ import os
 import pyscreenshot as ImageGrab
 from time import sleep
 import OCR.capture as capture
-import COrrector.Corrector as CO
+import Corrector.albert_corrector as CO
 
 
 class GUI(object):
@@ -34,9 +34,11 @@ class GUI(object):
     def command_for_button(self):
         str = self.init_data_Text.get('0.0','end')
         print("waiting for devolpoe",str)
-        result = CO.correctAll(str)
+        co = CO.AlbertCorrector()
+        result = co.correctAll(str)
         self.result_data_Text.delete('1.0','end')
-        self.result_data_Text.insert("end",esult)
+        print("result",result)
+        self.result_data_Text.insert("end",result)
 
     def key(self,event=None):
         print('You pressed Ctrl+Shift+t')

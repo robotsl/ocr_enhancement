@@ -14,7 +14,7 @@ pretrained = 'voidful/albert_chinese_tiny'
 dim = 50
 
 def get_label_dict():
-    f = open('./chinese_labels', 'rb')
+    f = open('/home/robotsl/workspace/ocr_enhancement/Corrector/chinese_labels', 'rb')
     label_dict = pickle.load(f)
     f.close()
     return label_dict
@@ -25,7 +25,7 @@ char2id = {x: y for x, y in zip(id2char.values(), id2char.keys())}
 def getAllReady():
     id2char = get_label_dict()
     char2id = {x: y for x, y in zip(id2char.values(), id2char.keys())}
-    M = torch.load(f'./shape2vec.{dim}d')['shape2vec']
+    M = torch.load(f'/home/robotsl/workspace/ocr_enhancement/Corrector/shape2vec.{dim}d')['shape2vec']
     print(M.shape)
     return M
 
@@ -49,13 +49,13 @@ def getTopKSimDict(K=20):
     return sim_dct
 
 sim_dct = getTopKSimDict()
-torch.save(sim_dct, "./sim_dct")
+torch.save(sim_dct, "/home/robotsl/workspace/ocr_enhancement/Corrector//sim_dct")
 
 
 
 # 加载
 def get_sim_dict():
-    sim_dict = torch.load('sim_dct')
+    sim_dict = torch.load('/home/robotsl/workspace/ocr_enhancement/Corrector/sim_dct')
     return sim_dict
 
 sim_dct = get_sim_dict()
@@ -69,8 +69,9 @@ def charSim(c1="于", c2="干"):
     return sim
 
 
-tokenizer = BertTokenizer.from_pretrained(pretrained)
-model = AlbertForMaskedLM.from_pretrained(pretrained)
+
+def initial():
+
 
 def correctAll(sent=""):
     assert(len(sent) > 1)
