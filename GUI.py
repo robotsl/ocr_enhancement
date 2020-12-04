@@ -11,6 +11,7 @@ import Corrector.albert_corrector as CO
 class GUI(object):
     def __init__(self):
         self.init_window = tk.Tk()
+        self.co = CO.AlbertCorrector()
     #设置窗口
     def set_init_window(self):
         self.init_window.title("OCR增强工具v0.1")           #窗口名
@@ -34,8 +35,7 @@ class GUI(object):
     def command_for_button(self):
         str = self.init_data_Text.get('0.0','end')
         print("waiting for devolpoe",str)
-        co = CO.AlbertCorrector()
-        result = co.correctAll(str)
+        result = self.co.correctAll(str)
         self.result_data_Text.delete('1.0','end')
         print("result",result)
         self.result_data_Text.insert("end",result)
