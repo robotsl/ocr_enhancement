@@ -15,7 +15,7 @@ class AlbertLM:
         self.tokenizer = BertTokenizer.from_pretrained(pretrained)
         self.model = AlbertForMaskedLM.from_pretrained(pretrained)
 
-    def getNextWordProb(self, pre_sent, next_word):
+    def getNextWordProb(self, pre_sent, next_word, make_log=True):
         assert isinstance(pre_sent, str)
         assert isinstance(next_word, str)
         msk_sent = pre_sent + "[MASK]"
@@ -29,7 +29,10 @@ class AlbertLM:
         logit_prob = softmax(prediction_scores[0, maskpos], dim=0).data.tolist()
 
         idx = self.tokenizer.convert_tokens_to_ids(next_word)
-        return logit_prob[idx]
+
+        prob = -np.log(logit_prob[idx]) if make_log else logit_prob[idx]
+
+        return prob
 
     @staticmethod
     def get_label_dict():
