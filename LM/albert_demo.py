@@ -26,11 +26,7 @@ logit_prob = softmax(prediction_scores[0, maskpos], dim=0).data.tolist()
 
 # predicted_index = torch.argmax(prediction_scores[0, maskpos]).item()
 
-values, indices = torch.topk(prediction_scores[0, maskpos], k=10, dim=0)
-
-for v in values:
-    predicted_token = tokenizer.convert_tokens_to_ids("我")
-    print(predicted_token)
+_, indices = torch.topk(prediction_scores[0, maskpos], k=10, dim=0)
 
 
 for idx in indices:
