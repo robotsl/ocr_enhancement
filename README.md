@@ -79,7 +79,7 @@ Other OCR tools(supported by pyocr) can work as well.
 
 ## 二、Language Model
 
-
+Require Python 3.4 and Pytorch 1.4
 
 
 
