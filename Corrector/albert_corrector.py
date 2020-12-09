@@ -42,8 +42,8 @@ class AlbertCorrector:
                     predicted_token = self.tokenizer.convert_ids_to_tokens([idx])[0]
                     sim = AlbertCorrector.charSim(self, c1=msk_char, c2=predicted_token)
                     if sim is not None and sim > sim_threshold:
-                        if sent[i] != predicted_token:
-                            print(f"{sent[i]} -> {predicted_token}")
+                        #if sent[i] != predicted_token:
+                            #print(f"{sent[i]} -> {predicted_token}")
                         sent = sent[:i] + predicted_token + sent[i + 1:]
                         break
         return sent
@@ -74,5 +74,5 @@ def get_label_dict():
 
 if __name__ == "__main__":
     corrector = AlbertCorrector()
-    result = corrector.correctAll("拜登拟任命亚州事务王管")
+    result = corrector.correctAll("传统功夫是点到为击",sim_threshold=0.45)
     print(result)

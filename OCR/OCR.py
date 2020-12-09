@@ -21,7 +21,7 @@ def parse_arg():
     args = parser.parse_args()
 
     with open(args.cfg, 'r') as f:
-        config = yaml.load(f)
+        config = yaml.load(f,Loader=yaml.FullLoader)
         config = edict(config)
 
     config.DATASET.ALPHABETS = alphabets.alphabet
@@ -60,30 +60,54 @@ def recognition(config, img, model, converter, device):
     index = torch.nonzero(torch.gt(preds,torch.tensor([0]).cuda())).squeeze()
     preds_size = Variable(torch.IntTensor([preds.size(0)]))
     sim_pred = converter.decode(preds.data, preds_size.data, raw=False)
+    #print(sim_pred)
     log_softmax = torch.index_select(preds1.T,1,index).T
-    print(log_softmax)
-    #new_log,idnex = torch.sort(log_softmax,dim = )
-    print('results: {0}'.format(sim_pred))
-    return sim_pred,log_softmax
+    #print(log_softmax.shape)   # [26,6736]
+    new_log,index = torch.sort(log_softmax,dim = -1,descending=True)
+    new_log = torch.exp(new_log[:,:20])
+    index = index[:,:20]
+    matrix = []
+    for i in range(log_softmax.shape[0]):
+        str = converter.decode(index[i].data, Variable(torch.IntTensor([index[i].shape[0]])).data, raw=False)
+        new_log_ = new_log[i].cpu().detach().numpy().tolist()
+        count = 0
+        temp = []
+        for j in range(index.shape[1] - 1):
+            if str[j] >= 'a' and str[j] <= 'z' or str[j] >= 'A' and str[j] <= 'Z':
+                continue
+            else:
+                count+= 1
+                temp.append([new_log_[j],str[j]])
+                if count >= 5:
+                    break
+        if len(temp) < 5:
+            [temp.append([1e-10,"#"]) for i in range(5 - len(temp))]
 
-def OCR_OR_LOGMAX(addition = None):
+        #print(temp)
+        matrix.append(temp)
+
+    #print('results: {0}'.format(sim_pred),"\n",matrix)
+    return sim_pred,matrix
+
+def OCR_OR_LOGMAX(addition = None,fileName = None):
     config, args = parse_arg()
     device = torch.device('cuda:0') if torch.cuda.is_available() else torch.device('cpu')
 
     model = crnn.get_crnn(config).to(device)
-    print('loading pretrained model from {0}'.format(args.checkpoint))
+    #print('loading pretrained model from {0}'.format(args.checkpoint))
     checkpoint = torch.load(args.checkpoint)
     if 'state_dict' in checkpoint.keys():
         model.load_state_dict(checkpoint['state_dict'])
     else:
         model.load_state_dict(checkpoint)
 
-    img = cv2.imread(args.image_path)
+    img = cv2.imread(fileName)
     img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     converter = utils.strLabelConverter(config.DATASET.ALPHABETS)
 
-    result,log = recognition(config, img, model, converter, device)
+    result,matrix = recognition(config, img, model, converter, device)
+    #print(result)
     if addition != None:
-        return result,log
+        return result,matrix
     else:
         return result

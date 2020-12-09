@@ -16,6 +16,7 @@ class MyCapture(object):
         self.tk_obj = tk_obj.init_window
         self.init_data_Text = tk_obj.init_data_Text
         self.ok = False
+        self.matrix = []
         #屏幕尺寸
         screenWidth = self.tk_obj.winfo_screenwidth()
         screenHeight = self.tk_obj.winfo_screenheight()
@@ -64,9 +65,9 @@ class MyCapture(object):
             self.top.destroy()
             pic.save(fileName)
             tk_obj.init_window.state('normal')
-            result,log = OCR.OCR_OR_LOGMAX("log")
+            result,matrix = OCR.OCR_OR_LOGMAX("log",fileName)
+            tk_obj.matrix = matrix
             #sorted,indes = torch.sort(log,-1)
-            print(log[:,:10].shape)
             #tk_obj.set_result(result,"before_enhance")
             tk_obj.init_data_Text.delete('1.0','end')
             #tk_obj.init_data_Text.insert("end","test")
