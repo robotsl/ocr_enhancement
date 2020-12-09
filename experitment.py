@@ -4,7 +4,6 @@ import OCR.OCR as OCR
 import pandas as pd
 import Corrector.albert_corrector as CO
 import Corrector.viterbi_corrector as VC
-import numpy as np
 
 co = CO.AlbertCorrector()
 vc = VC.ViterbiCorrector()
@@ -122,7 +121,6 @@ def validate_bert():
         for j in range(min(len(label_), len(data_), len(result))):
             if label_[j] not in "，,。.？?、\\()（）！!;；" or data_[j] not in "，,。.？?、\\()（）！!;；" or result[
                 j] not in "，,。.？?、\\()（）！!;；":
-                #total += 1
                 if j in vary[i]:  # 求TN和FP
                     # print("in",data_[j],result[j],label_[j])
                     if result[j] == label_[j] and data_[j] != label_[j]:
@@ -165,7 +163,6 @@ def validate_DP():
         label_ = labels[i]
         for j in range(min(len(label_),len(data_),len(result))):
             if label_[j] not in "，,。.？?、\\()（）！!;；" or data_[j] not in "，,。.？?、\\()（）！!;；" or result[j] not in "，,。.？?、\\()（）！!;；":
-                #total += 1
                 if j in vary[i]: #求TN和FP
                     #print("in",data_[j],result[j],label_[j])
                     if result[j] == label_[j] and data_[j] != label_[j]:
