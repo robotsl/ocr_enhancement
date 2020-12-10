@@ -28,7 +28,7 @@ def generate_imgs():
         tmp = sentences[i]
         im = Image.new("RGB", (1700, 73), (255, 255, 255))
         dr = ImageDraw.Draw(im)
-        font = ImageFont.truetype(os.path.join("fonts", "msyh.ttf"),45)
+        font = ImageFont.truetype(os.path.join("fonts", "msyh.ttf"),50)
         dr.text((10, 5), tmp, font=font, fill="#000000")  #[10,10]
         im.save('images/{index}.png'.format(index = i))
 
@@ -77,22 +77,21 @@ def ocr(sentences = sentences,labels = labels):
                     break
         else:
             pass
-
+        print("*",len(string), len(l_))
         if len(l_) > len(string):
             for j in range(len(l_) - len(string)):
                 string += '0'
         if len(l_) < len(string):
             dec = len(string) - len(l_)
-            for j in range(dec + 1):
+            for j in range(dec):
                 string.replace(string[len(string) - 1],'')
 
         print(len(string),len(l_))
 
         for j in range(len(l_)):
-            if tmp[j] != l_[j]:
+            if string[j] != l_[j]:
                 wrong.append(j)
         vary.append(wrong)
-        #print(vary)
         data.append(string)
         matrix.append(matrix_)
 
@@ -108,7 +107,7 @@ def validate_bert():
     '''
     total = 0
     FN = TN = FP = TP = 0
-    ACC = P = R = 0
+    UK= 0
 
     #sentences,labels = get_data()
     #data,vary,_ = ocr(sentences,labels)
@@ -118,23 +117,24 @@ def validate_bert():
         result = co.correctAll(data[i])
         data_ = data[i]
         label_ = labels[i]
-        for j in range(min(len(label_), len(data_), len(result))):
-            if label_[j] not in "，,。.？?、\\()（）！!;；" or data_[j] not in "，,。.？?、\\()（）！!;；" or result[
-                j] not in "，,。.？?、\\()（）！!;；":
-                if j in vary[i]:  # 求TN和FP
-                    # print("in",data_[j],result[j],label_[j])
-                    if result[j] == label_[j] and data_[j] != label_[j]:
+        for j in range(len(label_)):
+            if label_[j] not in "，,。.？?、\\()（）！!;；" :    # and data_[j] not in "，,。.？?、\\()（）！!;；" or result[j] not in "，,。.？?、\\()（）！!;；":
+
+                try:
+                    if result[j] == label_[j] and data_[j] != result[j]:
                         TN += 1
-                    if result[j] == data_[j] and data_[j] != label_[j]:
+                    elif result[j] != label_[j] and data_[j] == result[j]:
                         FP += 1
-                else:  # 求FN和TP
-                    # print("not in",data_[j],result[j],label_[j])
-                    if data_[j] == label_[j] and result[j] == label_[j]:
+                    elif result[j] == label_[j] and result[j] == data_[j]:
                         TP += 1
-                    elif data_[j] == label_[j] and result[j] != label_[j]:
+                    elif result[j] != label_[j] and result[j] != data[j]:
                         FN += 1
-            else:
-                pass
+                    else:
+                        print(label_[j],result[j],data_[j])
+                except:
+                    FN += 1
+
+
     print()
     total = TP + TN + FP + FN
     print("total,TP,TN,FP,FN:",total,TP,TN,FP,FN)
@@ -149,34 +149,32 @@ def validate_DP():
     TP,TN 分别是本来正确结果认为是正确和错误的次数（data_和result）
     FP,FN 分别是本来错误结果认为是正确和认为错误的次数（label_和result）
     '''
-    total = 0
-    FN = TN = FP = TP = 0
-    ACC = P = R = 0
 
-    #sentences,labels = get_data()
-    #data,vary,matrix = ocr(sentences,labels)
+    FN = TN = FP = TP = 0
 
     for i in range(len(data)):
-        #print("=",end='')
+        # print("=",end='')
         result = vc.correctAll(matrix[i])
         data_ = data[i]
         label_ = labels[i]
-        for j in range(min(len(label_),len(data_),len(result))):
-            if label_[j] not in "，,。.？?、\\()（）！!;；" or data_[j] not in "，,。.？?、\\()（）！!;；" or result[j] not in "，,。.？?、\\()（）！!;；":
-                if j in vary[i]: #求TN和FP
-                    #print("in",data_[j],result[j],label_[j])
-                    if result[j] == label_[j] and data_[j] != label_[j]:
+        for j in range(len(label_)):
+            if label_[j] not in "，,。.？?、\\()（）！!;；":   # or data_[j] not in "，,。.？?、\\()（）！!;；" or result[j] not in "，,。.？?、\\()（）！!;；":
+                try:
+                    if result[j] == label_[j] and data_[j] != result[j]:
                         TN += 1
-                    if result[j] == data_[j] and data_[j] != label_[j]:
+                    elif result[j] != label_[j] and data_[j] == result[j]:
                         FP += 1
-                else:  #求FN和TP
-                    #print("not in",data_[j],result[j],label_[j])
-                    if data_[j] == label_[j] and result[j] == label_[j]:
+                    elif result[j] == label_[j] and result[j] == data_[j]:
                         TP += 1
-                    elif data_[j] == label_[j] and result[j] != label_[j]:
+                    elif result[j] != label_[j] and result[j] != data[j]:
                         FN += 1
+                    else:
+                        print(label_[j],result[j],data_[j])
+                except:
+                    FN += 1
             else:
                 pass
+    print()
     total = TP + TN + FP + FN
     print("total,TP,TN,FP,FN:",total,TP,TN,FP,FN)
     ACC = (TP + TN) / total
