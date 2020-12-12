@@ -23,8 +23,8 @@ An assignment for NLP.
 ##### OCR （= 网页demo）
 
 - [x] OCR 模型
-- [ ] 能与纠错模型交互（its output as input）
-- [ ] 给出候选字列表 + 对应的softmax值表
+- [x] 能与纠错模型交互（its output as input）
+- [x] 给出候选字列表 + 对应的softmax值表
 
 ##### LM
 
@@ -40,7 +40,7 @@ An assignment for NLP.
 - [x] 字间相似度量函数 `charSim(c1, c2)`
 - [ ] ~~用于训练纠错模型的语料~~
 - [x] 神经网络纠错模型
-- [ ] 动态规划纠错模型
+- [x] 动态规划纠错模型
 
 
 
@@ -84,3 +84,8 @@ Other OCR tools(supported by pyocr) can work as well.
 
 
 ## 三、Corrector
+
+```
+pip install transformers==2.2.2
+```
+
