@@ -12,7 +12,7 @@ from torch.nn.functional import softmax
 class AlbertCorrector:
     def __init__(self, topK=10, dim=50, pretrained='voidful/albert_chinese_tiny'):
         self.topK = topK
-        self.M = torch.load(f'./shape2vec.{dim}d')['shape2vec']  # shape2vec
+        self.M = torch.load(f'/home/robotsl/workspace/ocr_enhancement/Corrector/shape2vec.{dim}d')['shape2vec']  # shape2vec
         self.id2char = get_label_dict()
         self.char2id = {x: y for x, y in zip(self.id2char.values(), self.id2char.keys())}
 
@@ -42,8 +42,8 @@ class AlbertCorrector:
                     predicted_token = self.tokenizer.convert_ids_to_tokens([idx])[0]
                     sim = AlbertCorrector.charSim(self, c1=msk_char, c2=predicted_token)
                     if sim is not None and sim > sim_threshold:
-                        if sent[i] != predicted_token:
-                            print(f"{sent[i]} -> {predicted_token}")
+                        #if sent[i] != predicted_token:
+                            #print(f"{sent[i]} -> {predicted_token}")
                         sent = sent[:i] + predicted_token + sent[i + 1:]
                         break
         return sent
@@ -66,7 +66,7 @@ def exShapeMatrix(m_path='ShapeNet.pth', d=300):
 
 
 def get_label_dict():
-    f = open('./chinese_labels', 'rb')
+    f = open('/home/robotsl/workspace/ocr_enhancement/Corrector/chinese_labels', 'rb')
     label_dict = pickle.load(f)
     f.close()
     return label_dict
@@ -74,5 +74,5 @@ def get_label_dict():
 
 if __name__ == "__main__":
     corrector = AlbertCorrector()
-    result = corrector.correctAll("拜登拟任命亚州事务王管")
+    result = corrector.correctAll("传统功夫是点到为击",sim_threshold=0.45)
     print(result)

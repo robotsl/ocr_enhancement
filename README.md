@@ -28,8 +28,8 @@ An assignment for NLP.
 
 ##### LM
 
-- [ ] 模型选择
-- [ ] 剪枝
+- [x] 模型选择
+- [x] 剪枝
 - [ ] 困惑度计算接口
 - [x] 字间转移概率
 
@@ -79,13 +79,10 @@ Other OCR tools(supported by pyocr) can work as well.
 
 ## 二、Language Model
 
+Require Python 3.4 and Pytorch 1.4
 
 
 
-
+=======
 ## 三、Corrector
-
-```
-pip install transformers==2.2.2
-```
 

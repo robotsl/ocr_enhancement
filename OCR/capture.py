@@ -1,9 +1,12 @@
 import tkinter
 import tkinter.filedialog
 import os
-from PIL import ImageGrab
+import torch
+#from PIL import ImageGrab
+import pyscreenshot as ImageGrab
+import OCR.OCR as OCR
 from time import sleep
-import OCR
+
 
 class MyCapture(object):
     def __init__(self,png,tk_obj):
@@ -13,6 +16,7 @@ class MyCapture(object):
         self.tk_obj = tk_obj.init_window
         self.init_data_Text = tk_obj.init_data_Text
         self.ok = False
+        self.matrix = []
         #屏幕尺寸
         screenWidth = self.tk_obj.winfo_screenwidth()
         screenHeight = self.tk_obj.winfo_screenheight()
@@ -56,13 +60,19 @@ class MyCapture(object):
             top, bottom = sorted([self.Y.get(), event.y])
             pic = ImageGrab.grab((left+1, top+1, right, bottom))
             #弹出保存截图对话框
-            fileName = "for_ocr.png"
+            fileName = "/home/robotsl/workspace/ocr_enhancement/OCR/images/for_ocr.png"
             #关闭当前窗口
             self.top.destroy()
             pic.save(fileName)
-            ocr = OCR.OCR()
-            result = ocr.pic_orc("D:/orc_enhancement/for_ocr.png",2,2.0)
-            tk_obj.set_result(result,"before_enhance")
+            tk_obj.init_window.state('normal')
+            result,matrix = OCR.OCR_OR_LOGMAX("log",fileName)
+            tk_obj.matrix = matrix
+            #sorted,indes = torch.sort(log,-1)
+            #tk_obj.set_result(result,"before_enhance")
+            tk_obj.init_data_Text.delete('1.0','end')
+            #tk_obj.init_data_Text.insert("end","test")
+            tk_obj.init_data_Text.insert("end",result)
+            tk_obj.result_data_Text.delete('1.0','end')
 
         self.canvas.bind('<ButtonRelease-1>', onLeftButtonUp)
         self.canvas.pack(fill=tkinter.BOTH, expand=tkinter.YES)

@@ -1,14 +1,17 @@
 import tkinter as tk
 import tkinter.filedialog
 import os
-from PIL import ImageGrab
+#from PIL import ImageGrab
+import pyscreenshot as ImageGrab
 from time import sleep
-import capture
-#import OCR
+import OCR.capture as capture
+import Corrector.albert_corrector as CO
+
 
 class GUI(object):
     def __init__(self):
         self.init_window = tk.Tk()
+        self.co = CO.AlbertCorrector()
     #设置窗口
     def set_init_window(self):
         self.init_window.title("OCR增强工具v0.1")           #窗口名
@@ -32,21 +35,25 @@ class GUI(object):
     def command_for_button(self):
         str = self.init_data_Text.get('0.0','end')
         print("waiting for devolpoe",str)
+        result = self.co.correctAll(str)
         self.result_data_Text.delete('1.0','end')
-        self.result_data_Text.insert("end",str)
+        print("result",result)
+        self.result_data_Text.insert("end",result)
 
     def key(self,event=None):
         print('You pressed Ctrl+Shift+t')
-        self.init_window.state('icon')
-        sleep(0.2)
-        filename = 'temp.png'  #这里一定要这样写，不然会出错
+        self.init_window.state('iconic')
+        filename = './OCR/images/temp.png'  #这里一定要这样写，不然会出错
         im = ImageGrab.grab()
         im.save(filename)
         im.close()
-        ok = capture.MyCapture(filename,self)
-        self.clear_text()
-        self.init_window.state('normal')
-        sleep(2)
+        #self.init_data_Text.insert("end","test")
+        capture.MyCapture(filename,self)
+        self.init_window.state('withdrawn')
+        #self.init_data_Text.insert("end","test")
+        #self.clear_text()
+
+
 
     def gui_start(self):
         self.set_init_window()
@@ -64,3 +71,10 @@ class GUI(object):
     def clear_text(self):
         self.init_data_Text.delete('1.0','end')
         self.result_data_Text.delete('1.0','end')
+
+def main():
+    gui = GUI()
+    gui.gui_start()
+
+if __name__ == '__main__':
+    main()
