@@ -2,7 +2,7 @@ import tkinter
 import tkinter.filedialog
 import os
 import torch
-#from PIL import ImageGrab
+#from PIL import ImageGrab # for windows
 import pyscreenshot as ImageGrab
 import OCR.OCR as OCR
 from time import sleep
