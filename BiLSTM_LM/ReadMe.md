@@ -5,5 +5,5 @@
 3. 预训练WordEmbedding(https://pan.baidu.com/s/1AmXYWVgkxrG4GokevPtNgA)
 4. 自行生成w2v_map存入data目录下
 5. 运行BiLSTM.py 开始训练
-6. 运行getsim.py预测形近字
+6. 运行get——prob.py预测形近字
 

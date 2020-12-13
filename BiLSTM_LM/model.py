@@ -1,6 +1,9 @@
 from utils import *
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-# Embedding_matrix = pretrained_embedding_layer(w2v_m, w2i)
+
+Embedding_matrix = pretrained_embedding_layer(w2v_m, w2i)
+
+
 n_hidden = 128
 class BiLSTM(nn.Module):
     def __init__(self, vocab_size, n_hidden, embedding_dim):
@@ -20,7 +23,8 @@ class BiLSTM(nn.Module):
         input = input.to(torch.float32)
         input = input.permute(1, 0, 2) # input : [len_seq, batch_size, embedding_dim]
 
-        #初始化 h 和 c
+
+        #初始化h和c
         hidden_state = torch.zeros(1*2, len(X), self.n_hidden).to(device)   # [num_layers(=1) * num_directions(=2), batch_size, n_hidden]
         cell_state = torch.zeros(1*2, len(X), self.n_hidden).to(device)     # [num_layers(=1) * num_directions(=2), batch_size, n_hidden]
 
