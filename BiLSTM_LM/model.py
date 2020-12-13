@@ -1,10 +1,8 @@
 from utils import *
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-
 Embedding_matrix = pretrained_embedding_layer(w2v_m, w2i)
-
-
 n_hidden = 128
+
 class BiLSTM(nn.Module):
     def __init__(self, vocab_size, n_hidden, embedding_dim):
         super(BiLSTM, self).__init__()
@@ -13,8 +11,6 @@ class BiLSTM(nn.Module):
         self.word_embeddings = nn.Embedding.from_pretrained(Embedding_matrix, freeze=True)
         self.lstm = nn.LSTM(input_size=embedding_dim, hidden_size=n_hidden, bidirectional=True)
         self.linear = nn.Linear(n_hidden * 2, vocab_size)
-        self.bn = nn.BatchNorm1d(vocab_size)
-        self.softmax = nn.Softmax(dim=1)
         self.apply(self._init_weights)
 
     def forward(self, X):
@@ -31,8 +27,7 @@ class BiLSTM(nn.Module):
         outputs, (_, _) = self.lstm(input, (hidden_state, cell_state))
         outputs = outputs.view(-1, n_hidden * 2)
         outputs = self.linear(outputs)
-        outputs = self.bn(outputs)
-        outputs = self.softmax(outputs)
+
 
         #outputs = outputs.view(1, outputs.shape[1], outputs.shape[0])
 

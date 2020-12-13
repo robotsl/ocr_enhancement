@@ -38,7 +38,7 @@ def read_txt(data_path):
         l = []
         contents = f.read().decode()
         for raw in re.split('\s{2,}', contents):
-        # X就选择为raw,而Y比X快一个值，最后一个为‘\n’
+        # X就选择为raw,而Y比X快一个值，最后一个为‘\\’
             x_cache.append(raw)
             x_str_cache = list(raw)
             if x_str_cache[0] != '<':
@@ -64,12 +64,11 @@ def sentences_to_indices(sentence, w2i, Len):
         if w in w2i.keys():
             X_indices[j] = w2i[w]
         else:
-            X_indices[j] = w2i['<unk>']
+            X_indices[j] = 0 # UNK的索引
             count += 1
         if j > 0:
             Y_indices[j-1] = X_indices[j]
-    if j-2 > 0:
-        Y_indices[j-1] = w2i['\\']
+    Y_indices[j] = w2i['\\']#换行
     #print('The number of UNK is :', count)
     X, Y = torch.LongTensor(X_indices), torch.LongTensor(Y_indices)
     return X, Y

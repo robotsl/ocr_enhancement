@@ -40,9 +40,9 @@ class BiLSTM(nn.Module):
         self.word_embeddings = nn.Embedding.from_pretrained(Embedding_matrix, freeze=True)
         self.lstm = nn.LSTM(input_size=embedding_dim, hidden_size=n_hidden, bidirectional=True)
         self.linear = nn.Linear(n_hidden * 2, vocab_size)
-        self.bn = nn.BatchNorm1d(vocab_size)
-        self.relu = nn.ReLU()
-        self.softmax = nn.Softmax(dim=1)
+        #self.bn = nn.BatchNorm1d(vocab_size)
+        #self.relu = nn.ReLU()
+        #self.softmax = nn.Softmax(dim=1)
         self.apply(self._init_weights)
 
     def forward(self, X):
@@ -59,8 +59,7 @@ class BiLSTM(nn.Module):
         outputs, (_, _) = self.lstm(input, (hidden_state, cell_state))
         outputs = outputs.view(-1, n_hidden * 2)
         outputs = self.linear(outputs)
-        outputs = self.bn(outputs)
-        outputs = self.softmax(outputs)
+
 
         #outputs = outputs.view(1, outputs.shape[1], outputs.shape[0])
 
@@ -108,7 +107,7 @@ def train(model, loss_fn, optimizer, epochs):
 
             x, y = x.to(device), y.to(device)
             z_pred = model(x)
-            loss += loss_fn(z_pred, y.view(y.shape[1]))
+            loss += loss_fn(z_pred, y.reshape([-1]))
 
             loss.backward()
             torch.nn.utils.clip_grad_norm_(model.parameters(), 5)  # gradient clipping
@@ -120,12 +119,12 @@ def train(model, loss_fn, optimizer, epochs):
             print(f'{"-" * 20} Epoch {e} {"-" * 20}')
             print("困惑度为:", perp_list[e-1])
 
-    costs.append(perp_list)
+    torch.save(model, './model/LM_128_withsoftmaxbn.pt')
+    #costs.append(perp_list)
     plt.plot(perp_list)
     plt.ylabel('cost')
     plt.xlabel('iterations')
     plt.title("Learning rate =" + str(learning_rate)+"; n_hidden ="+str(n_hidden))
     plt.show()
 
-train(model, loss_fn, optimizer, epochs=150)
-torch.save(model, './model/LM_128_withsoftmaxbn.pt')
+train(model, loss_fn, optimizer, epochs=100)
