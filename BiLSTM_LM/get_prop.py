@@ -1,10 +1,10 @@
-from LM import BiLSTM
+from model import BiLSTM
 from utils import sentences_to_indices, w2i, i2w
 import torch
 from torch.nn.functional import softmax
 device = torch.device('cuda')
 
-input_sentence = '数学[mask]使用在不同的领'
+input_sentence = '你[mask]'
 model = torch.load("./model/LM.pt").to(device)
 
 def de_mask(input_sentence):

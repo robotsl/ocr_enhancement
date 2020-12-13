@@ -5,14 +5,13 @@ import pickle
 import torchvision.models as models
 from transformers import BertTokenizer, AlbertForMaskedLM
 import torch
-import copy
 from torch.nn.functional import softmax
 
 
 class AlbertCorrector:
     def __init__(self, topK=10, dim=50, pretrained='voidful/albert_chinese_tiny'):
         self.topK = topK
-        self.M = torch.load(f'/home/robotsl/workspace/ocr_enhancement/Corrector/shape2vec.{dim}d')['shape2vec']  # shape2vec
+        self.M = torch.load(f'shape2vec.{dim}d')['shape2vec']  # shape2vec
         self.id2char = get_label_dict()
         self.char2id = {x: y for x, y in zip(self.id2char.values(), self.id2char.keys())}
 
@@ -66,7 +65,7 @@ def exShapeMatrix(m_path='ShapeNet.pth', d=300):
 
 
 def get_label_dict():
-    f = open('/home/robotsl/workspace/ocr_enhancement/Corrector/chinese_labels', 'rb')
+    f = open('chinese_labels', 'rb')
     label_dict = pickle.load(f)
     f.close()
     return label_dict
@@ -74,5 +73,5 @@ def get_label_dict():
 
 if __name__ == "__main__":
     corrector = AlbertCorrector()
-    result = corrector.correctAll("传统功夫是点到为击",sim_threshold=0.45)
+    result = corrector.correctAll("拜登拟任命亚州事务王管", sim_threshold=0.5)
     print(result)
