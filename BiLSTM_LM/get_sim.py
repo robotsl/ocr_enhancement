@@ -1,4 +1,4 @@
-from LM import BiLSTM
+from model import BiLSTM
 from utils import sentences_to_indices, w2i, i2w
 import torch
 import numpy as np

@@ -1,15 +1,13 @@
-import torch
 import numpy as np
 import pickle
-from transformers import BertTokenizer, AlbertForMaskedLM
+from transformers import BertTokenizer
 import torch
-from torch.nn.functional import softmax
-from .albert_LM import AlbertLM as AlbertLM
+from albert_LM import AlbertLM as AlbertLM
 
 class ViterbiCorrector:
     def __init__(self, topK=10, dim=50, pretrained='voidful/albert_chinese_tiny'):
         self.topK = topK
-        self.M = torch.load(f'/home/robotsl/workspace/ocr_enhancement/Corrector/shape2vec.{dim}d')['shape2vec']  # shape2vec
+        self.M = torch.load(f'shape2vec.{dim}d')['shape2vec']  # shape2vec
         self.id2char = get_label_dict()
         self.char2id = {x: y for x, y in zip(self.id2char.values(), self.id2char.keys())}
 
@@ -44,11 +42,8 @@ class ViterbiCorrector:
         return sent
 
 
-
-
-
 def get_label_dict():
-    f = open('/home/robotsl/workspace/ocr_enhancement/Corrector/chinese_labels', 'rb')
+    f = open('chinese_labels', 'rb')
     label_dict = pickle.load(f)
     f.close()
     return label_dict
