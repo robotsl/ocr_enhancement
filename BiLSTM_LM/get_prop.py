@@ -1,27 +1,22 @@
-from model import BiLSTM
-from utils import sentences_to_indices, w2i, i2w
+from model import BiLSTM # don't delete it!!
+from val_utils import *
 import torch
-from torch.nn.functional import softmax
 device = torch.device('cuda')
 
-input_sentence = '你[mask]'
-model = torch.load("./model/LM.pt").to(device)
+input_sentence = '数[mask]'# input your sentence here and using "[mask]"去get the target word proability
+model = torch.load("./model/LM_128_withsoftmaxbn.pt").to(device)
 
 def de_mask(input_sentence):
     input = list(input_sentence)
     for i in range(len(input)):
         if i + 2 <= len(input) and input[i] == '[' and input[i + 1] == 'm' and input[i + 2] == 'a':
-            input[i] = '/'
-            flag = i
+            input[i] = '/'# '/'will be processed as <unk>
+            flag = i-1
             del input[i+1:i + 6]
     return input, flag
 
 def get_prob(input_sentence, flag):
-    '''
 
-    :param input_sentence:
-    :return:
-    '''
     L = len(list(input_sentence))
     input = torch.zeros([1, L], dtype=torch.int64).to(device)
 
@@ -30,7 +25,7 @@ def get_prob(input_sentence, flag):
     for i in range(L):
         input[0][i] = input_indices[i]
 
-    out = softmax(model(input).view(L, 7100), dim=1)
+    out = model(input)
 
     indices = list(torch.argsort(out[flag], descending=True)[0:9].cpu().detach().numpy())
 

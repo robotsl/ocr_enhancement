@@ -22,11 +22,11 @@ def pretrained_embedding_layer(w2v_map, w2i):
 
 w2i = np.load('./data/w2i_sl.npy', allow_pickle=True).item()
 i2w = np.load('./data/i2w_sl.npy', allow_pickle=True).item()
-# w2v_m = np.load('./data/w2v_m_sl.npy', allow_pickle=True).item()
+w2v_m = np.load('./data/w2v_m_sl.npy', allow_pickle=True).item()
 
 w2i['<unk>'] = 0
-i2w['0'] = '<unk>'
-# w2v_m['<unk>'] = np.zeros([300])
+i2w[0] = '<unk>'
+w2v_m['<unk>'] = np.zeros([300])
 
 def convert_to_one_hot(Y, C):
     Y = np.eye(C)[Y.reshape(-1)]

@@ -1,8 +1,6 @@
 from model import BiLSTM
-from utils import sentences_to_indices, w2i, i2w
+from val_utils import *
 import torch
-import numpy as np
-from torch.nn.functional import softmax
 device = torch.device('cuda')
 #原始的句子
 ori_input_sentence = '今天出了太阳'
@@ -20,7 +18,7 @@ def de_mask(input_sentence):
     for i in range(len(input)):
         if i + 2 <= len(input) and input[i] == '[' and input[i + 1] == 'm' and input[i + 2] == 'a':
             input[i] = '/'
-            flag = i
+            flag = i-1
             del input[i+1:i + 6]
     return input, flag
 
@@ -38,7 +36,7 @@ def get_prob(input_sentence, flag):
     for i in range(L):
         input[0][i] = input_indices[i]
 
-    out = softmax(model(input).view(L, 7100), dim=1)
+    out = model(input)
 
     similar_indices = []
     out_similar = []

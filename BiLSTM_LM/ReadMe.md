@@ -4,6 +4,7 @@
 2. 需要将数据命名为dataset.txt 来展开训练（数据下载地址：https://pan.baidu.com/s/1wdXesmTVBtoh1XNvJOD-dg 提取码：pecg）
 3. 预训练WordEmbedding(https://pan.baidu.com/s/1AmXYWVgkxrG4GokevPtNgA)
 4. 自行生成w2v_map存入data目录下
+5. 训练好的模型在model文件夹下
 5. 运行BiLSTM.py 开始训练
-6. 运行get——prob.py预测形近字
+6. 测试：运行get_prop.py预测下个字的概率
 

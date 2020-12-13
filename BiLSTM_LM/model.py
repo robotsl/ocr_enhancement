@@ -12,9 +12,10 @@ class BiLSTM(nn.Module):
         self.embedding_dim = embedding_dim
         self.word_embeddings = nn.Embedding.from_pretrained(Embedding_matrix, freeze=True)
         self.lstm = nn.LSTM(input_size=embedding_dim, hidden_size=n_hidden, bidirectional=True)
-        self.softmax = nn.Linear(n_hidden * 2, vocab_size)
+        self.linear = nn.Linear(n_hidden * 2, vocab_size)
         self.bn = nn.BatchNorm1d(vocab_size)
         self.relu = nn.ReLU()
+        self.softmax = nn.Softmax(dim=1)
         self.apply(self._init_weights)
 
     def forward(self, X):
@@ -23,7 +24,6 @@ class BiLSTM(nn.Module):
         input = input.to(torch.float32)
         input = input.permute(1, 0, 2) # input : [len_seq, batch_size, embedding_dim]
 
-
         #初始化h和c
         hidden_state = torch.zeros(1*2, len(X), self.n_hidden).to(device)   # [num_layers(=1) * num_directions(=2), batch_size, n_hidden]
         cell_state = torch.zeros(1*2, len(X), self.n_hidden).to(device)     # [num_layers(=1) * num_directions(=2), batch_size, n_hidden]
@@ -31,8 +31,11 @@ class BiLSTM(nn.Module):
         # output : [len_seq, batch_size, num_directions(=2)*n_hidden]
         outputs, (_, _) = self.lstm(input, (hidden_state, cell_state))
         outputs = outputs.view(-1, n_hidden * 2)
+        outputs = self.linear(outputs)
+        outputs = self.bn(outputs)
         outputs = self.softmax(outputs)
-        outputs = outputs.view(1, outputs.shape[1], outputs.shape[0])
+
+        #outputs = outputs.view(1, outputs.shape[1], outputs.shape[0])
 
         return outputs
 

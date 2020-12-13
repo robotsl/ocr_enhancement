@@ -42,6 +42,7 @@ class BiLSTM(nn.Module):
         self.linear = nn.Linear(n_hidden * 2, vocab_size)
         self.bn = nn.BatchNorm1d(vocab_size)
         self.relu = nn.ReLU()
+        self.softmax = nn.Softmax(dim=1)
         self.apply(self._init_weights)
 
     def forward(self, X):
@@ -59,9 +60,9 @@ class BiLSTM(nn.Module):
         outputs = outputs.view(-1, n_hidden * 2)
         outputs = self.linear(outputs)
         outputs = self.bn(outputs)
-        outputs = self.relu(outputs)
+        outputs = self.softmax(outputs)
 
-        outputs = outputs.view(1, outputs.shape[1], outputs.shape[0])
+        #outputs = outputs.view(1, outputs.shape[1], outputs.shape[0])
 
         return outputs
 
@@ -84,7 +85,7 @@ def evaluate(model):
             x, y = x.to(device), y.to(device)
             with torch.no_grad():
                 output = model(x)
-            loss = loss_fn(output, y)
+            loss = loss_fn(output, y.view(y.shape[1]))
             total_count += np.multiply(*x.size())
             total_loss += loss.item() * np.multiply(*x.size())
 
@@ -107,7 +108,7 @@ def train(model, loss_fn, optimizer, epochs):
 
             x, y = x.to(device), y.to(device)
             z_pred = model(x)
-            loss += loss_fn(z_pred, y)
+            loss += loss_fn(z_pred, y.view(y.shape[1]))
 
             loss.backward()
             torch.nn.utils.clip_grad_norm_(model.parameters(), 5)  # gradient clipping
@@ -127,4 +128,4 @@ def train(model, loss_fn, optimizer, epochs):
     plt.show()
 
 train(model, loss_fn, optimizer, epochs=150)
-torch.save(model, './model/LM_128_withrelubn.pt')
+torch.save(model, './model/LM_128_withsoftmaxbn.pt')
