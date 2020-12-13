@@ -14,7 +14,6 @@ class BiLSTM(nn.Module):
         self.lstm = nn.LSTM(input_size=embedding_dim, hidden_size=n_hidden, bidirectional=True)
         self.linear = nn.Linear(n_hidden * 2, vocab_size)
         self.bn = nn.BatchNorm1d(vocab_size)
-        self.relu = nn.ReLU()
         self.softmax = nn.Softmax(dim=1)
         self.apply(self._init_weights)
 
