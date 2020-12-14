@@ -8,9 +8,10 @@ class BiLSTM(nn.Module):
         super(BiLSTM, self).__init__()
         self.n_hidden = n_hidden
         self.embedding_dim = embedding_dim
-        self.word_embeddings = nn.Embedding.from_pretrained(Embedding_matrix, freeze=True)
-        self.lstm = nn.LSTM(input_size=embedding_dim, hidden_size=n_hidden, bidirectional=True)
-        self.linear = nn.Linear(n_hidden * 2, vocab_size)
+        self.word_embeddings = nn.Embedding.from_pretrained(Embedding_matrix, freeze=False)
+        self.lstm = nn.LSTM(input_size=embedding_dim, hidden_size=n_hidden, num_layers=2, bidirectional=True)
+        self.linear = nn.Linear(n_hidden*2, vocab_size)
+        self.drop = nn.Dropout(0.5)
         self.apply(self._init_weights)
 
     def forward(self, X):
@@ -20,16 +21,14 @@ class BiLSTM(nn.Module):
         input = input.permute(1, 0, 2) # input : [len_seq, batch_size, embedding_dim]
 
         #初始化h和c
-        hidden_state = torch.zeros(1*2, len(X), self.n_hidden).to(device)   # [num_layers(=1) * num_directions(=2), batch_size, n_hidden]
-        cell_state = torch.zeros(1*2, len(X), self.n_hidden).to(device)     # [num_layers(=1) * num_directions(=2), batch_size, n_hidden]
+        hidden_state = torch.zeros(4, 1, self.n_hidden).to(device)   # [num_layers(=2) * num_directions(=1), batch_size, n_hidden]
+        cell_state = torch.zeros(4, 1, self.n_hidden).to(device)     # [num_layers(=2) * num_directions(=1), batch_size, n_hidden]
 
         # output : [len_seq, batch_size, num_directions(=2)*n_hidden]
-        outputs, (_, _) = self.lstm(input, (hidden_state, cell_state))
-        outputs = outputs.view(-1, n_hidden * 2)
+        outputs, _ = self.lstm(input, (hidden_state, cell_state))
+        outputs = outputs.view(-1, n_hidden*2)
+        outputs = self.drop(outputs)
         outputs = self.linear(outputs)
-
-
-        #outputs = outputs.view(1, outputs.shape[1], outputs.shape[0])
 
         return outputs
 

@@ -26,49 +26,69 @@ w2v_m = np.load('./data/w2v_m_sl.npy', allow_pickle=True).item()
 
 w2i['<unk>'] = 0
 i2w[0] = '<unk>'
-w2v_m['<unk>'] = np.zeros([300])
+w2v_m['<unk>'] = np.random.randn((300))
 
 def convert_to_one_hot(Y, C):
     Y = np.eye(C)[Y.reshape(-1)]
     return Y
 
-def read_txt(data_path):
+
+def del_unk(sentence, w2i):
+    new_sentence = ''
+    word_list = list(sentence)
+    for word in word_list:
+        if word in w2i.keys():
+            new_sentence = new_sentence + word
+    return new_sentence
+#data augmentation
+def read_txt(data_path, w2i):
     with open(data_path, 'rb') as f:
-        x, x_cache = [], []
+        x, x_cache, s_cache = [], [], []
         l = []
         contents = f.read().decode()
         for raw in re.split('\s{2,}', contents):
-        # X就选择为raw,而Y比X快一个值，最后一个为‘\\’
-            x_cache.append(raw)
+            #x_cache.append(raw)
             x_str_cache = list(raw)
-            if x_str_cache[0] != '<':
-                x.append(raw)
-                x_str = list(raw)
-                l.append(len(x_str))
+            raw = del_unk(raw, w2i)
+            if len(raw) > 0:
+                if x_str_cache[0] != '<':
+                    x.append(raw)
+                    l.append(len(raw))
+                for sen in re.split('[，。]', raw):
+                    if len(sen) > 0:
+                        x.append(sen)
+                        l.append(len(sen))
 
         l = np.asarray(l)
         x = np.asarray(x)
         return l, x
 
-def sentences_to_indices(sentence, w2i, Len):
 
+
+
+def sentences_to_indices(sentence, w2i):
+    Len = len(list(sentence))
     # 使用0初始化X_indices
+    sentences_words = list(sentence)
     X_indices = np.zeros((Len), dtype=np.float32)
     Y_indices = np.zeros_like(X_indices)
-    sentences_words = list(sentence)
-    count = 0
+
     # 初始化j为0
     # 遍历这个单词列表
     for j, w in enumerate(sentences_words):
         # 将X_indices的第j号元素为对应的单词索引
         if w in w2i.keys():
             X_indices[j] = w2i[w]
-        else:
-            X_indices[j] = 0 # UNK的索引
-            count += 1
+        #由于词典较小，UNK太多导致结果不好，这里直接过滤掉UNK
+       # else:
+         #   X_indices[j] = 0 # UNK的索引
+         #   count += 1
         if j > 0:
             Y_indices[j-1] = X_indices[j]
-    Y_indices[j] = w2i['\\']#换行
+    Y_indices[-1] = w2i['\\']#换行
     #print('The number of UNK is :', count)
     X, Y = torch.LongTensor(X_indices), torch.LongTensor(Y_indices)
     return X, Y
+
+
+
